@@ -1,12 +1,67 @@
 import React, { Component } from "react";
-
 import classnames from "classnames";
 
-class Dashboard extends Component {
-  render() {
-    const dashboardClasses = classnames("dashboard");
+import Loading from "./Loading";
+import Panel from "./Panel";
 
-    return <main className={dashboardClasses} />;
+const data = [
+  {
+    id: 1,
+    label: "Total Interviews",
+    value: 6
+  },
+  {
+    id: 2,
+    label: "Least Popular Time Slot",
+    value: "1pm"
+  },
+  {
+    id: 3,
+    label: "Most Popular Day",
+    value: "Wednesday"
+  },
+  {
+    id: 4,
+    label: "Interviews Per Day",
+    value: "2.3"
+  }
+];
+
+class Dashboard extends Component {
+  state = {
+    loading: false,
+    focused: null
+  }
+
+  selectPanel = (id) => {
+    // this.setState({
+    //  focused: id
+    // });
+    this.setState(prev => prev.focused ? {focused: null} : {focused: id})
+   }
+
+    //selectPanel = (id) => {
+    //   this.setState(prev => prev.focused === id ? {focused: null} : {focused: id})
+    // }
+   
+  render() {
+
+    const dashboardClasses = classnames("dashboard", {
+      "dashboard--focused": this.state.focused
+     });
+    
+    return this.state.loading ? <Loading /> 
+    : 
+    <main className={dashboardClasses}>
+      {data
+      .filter(panel => this.state.focused === null || this.state.focused === panel.id)
+      .map(data => <Panel 
+      key={data.id} 
+      id={data.id} 
+      label={data.label} 
+      value={data.value}
+      selectPanel={(e) => this.selectPanel(data.id)}/>)}
+    </main>
   }
 }
 
